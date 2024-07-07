@@ -3,14 +3,14 @@ Copyright (c) 1998-2012 PowerBasic Inc.
 Englewood, Florida USA
 All Rights Reserved
 
-Primary source:  C:\Users\tsh\Documents\My Firefly Projects\PowerbasicCode\_TEST-Tools\Logfeeder.bas   {220655 total lines}
+Primary source:  C:\Users\tsh\Documents\My Firefly Projects\PowerbasicCode\_TEST-Tools\Logfeeder.bas   {220657 total lines}
 Target compilation:  Logfeeder.EXE
-Compile time:  0.7 seconds, at 18913285 lines/minute
+Compile time:  0.7 seconds, at 18913457 lines/minute
 
-20048 bytes compiled code, 27684 bytes RTLibrary,
-6732 bytes string literals, and 9752 bytes dgroup.
+20032 bytes compiled code, 27684 bytes RTLibrary,
+6612 bytes string literals, and 9632 bytes dgroup.
 Executable stack size:  1048576 bytes.
-Disk image: 60416 bytes   Memory image: 44168 bytes.
+Disk image: 60416 bytes   Memory image: 43928 bytes.
 
 Component Files:
 ----------------
@@ -20,7 +20,7 @@ C:\USERS\TSH\DOCUMENTS\MY FIREFLY PROJECTS\JOSEINCLUDES\ADO.INC
 C:\USERS\TSH\DOCUMENTS\MY FIREFLY PROJECTS\JOSEINCLUDES\WINDOWS.INC
 C:\USERS\TSH\DOCUMENTS\MY FIREFLY PROJECTS\JOSEINCLUDES\SDKDDKVER.INC
 C:\USERS\TSH\DOCUMENTS\MY FIREFLY PROJECTS\JOSEINCLUDES\WINDEF.INC
-C:\USERS\TSH\DOCUMENTS\MY FIREFLY PROJECTS\JOSEINCLUDES\WINNT.INC
+C:\USERS\TSH\DOCUMENTS\GITHUB\INCLUDES\WINNT.INC
 C:\USERS\TSH\DOCUMENTS\MY FIREFLY PROJECTS\JOSEINCLUDES\BASETSD.INC
 C:\USERS\TSH\DOCUMENTS\MY FIREFLY PROJECTS\JOSEINCLUDES\GUIDDEF.INC
 C:\USERS\TSH\DOCUMENTS\MY FIREFLY PROJECTS\JOSEINCLUDES\NTSTATUS.INC

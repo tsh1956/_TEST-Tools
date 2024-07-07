@@ -33,11 +33,17 @@ FUNCTION PBMAIN () AS LONG
         STDOUT "no status flag":EXIT FUNCTION
     END IF
 
-    LOCAL lConStr AS STRING
+    LOCAL lConStr,lConStr2 AS STRING
     lConStr = "Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=LogServices;Data Source=SQLSERVER-01\DEV01"
+
     'lConStr = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
-    lConStr = "Provider=SQLOLEDB.1;Data Source=ubuntu14;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
+    'lConStr = "Provider=SQLOLEDB.1;Data Source=ubuntu14;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
     'lConStr = "Provider=SQLOLEDB.1;Persist Security Info=True;;User ID=sa;Password=**nf_991**;Initial Catalog=LogServices;Data Source=4.180.32.85\DEV01,62022"
+
+    lConStr2 = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=EmailServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
+    'lConStr2 = "Provider=SQLOLEDB.1;Data Source=ubuntu14;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
+    'lConStr2 = "Provider=SQLOLEDB.1;Persist Security Info=True;;User ID=sa;Password=**nf_991**;Initial Catalog=LogServices;Data Source=4.180.32.85\DEV01,62022"
+
     DIM lStatAry(1 TO 3) AS STRING
     lStatAry(1) = "a"
     lStatAry(2) = "b"
@@ -105,6 +111,6 @@ FUNCTION PBMAIN () AS LONG
     ",DayNumber=" & FORMAT$(AfxDay(),"00") & _
     " Where ID=" & FORMAT$(lID) & ";")
 
-    TsH_MSSQL_WriteToSysLog(lConStr,14,"user-level messages ",6,"Informational","localhost","Logfeeder","TsH","TestMelding")
+    'TsH_MSSQL_WriteToSysLog(lConStr,14,"user-level messages ",6,"Informational","localhost","Logfeeder","TsH","TestMelding")
 
 END FUNCTION
