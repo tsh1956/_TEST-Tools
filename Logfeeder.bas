@@ -1,6 +1,7 @@
 #COMPILE EXE
 #DIM ALL
-%SupressSQLErrors=-1
+'%SupressSQLErrors=-1 'No error reporting from MSSQL on errors. Remove this constant to display errors.
+%DEBUG=0
 #INCLUDE "tsh_MSSQL.INC"
 
 FUNCTION PBMAIN () AS LONG
@@ -14,10 +15,10 @@ FUNCTION PBMAIN () AS LONG
     RESET lStatus,lStatusBar
 
     LOCAL lID AS LONG
-    lIn_1 = COMMAND$(1)
-    lIn_2 = COMMAND$(2)
-    lIn_3 = COMMAND$(3)
-    lIn_4 = COMMAND$(4)
+    lIn_1 = COMMAND$(1) 'id
+    lIn_2 = COMMAND$(2) 'statusflags
+    lIn_3 = COMMAND$(3) 'email addresse(s) for alerts
+    lIn_4 = COMMAND$(4) '
     lIn_5 = COMMAND$(5)
 
     IF LEN(lIn_1) <> 0 THEN
@@ -27,27 +28,27 @@ FUNCTION PBMAIN () AS LONG
     END IF
 
     IF LEN(lIn_2) = 1 THEN
-        IF TALLY(LCASE$(lIn_2),ANY "abcdexy") > 0 THEN lStatus = lIn_2
+        IF TALLY(LCASE$(lIn_2),ANY "abcdexy") > 0 THEN lStatus = LCASE$(lIn_2)
     ELSE
         lStatus = ""
         STDOUT "no status flag":EXIT FUNCTION
     END IF
 
     LOCAL lConStr,lConStr2 AS STRING
-    lConStr = "Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=LogServices;Data Source=SQLSERVER-01\DEV01"
 
-    'lConStr = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
-    'lConStr = "Provider=SQLOLEDB.1;Data Source=ubuntu14;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
+    lConStr =  "Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=LogServices;Data Source=SQLSERVER-01\DEV01"
+    lConStr2 = "Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=EmailResources;Data Source=SQLSERVER-01\SQLSERVER01"
+
+    'Dev01
+    'lConStr2 = "Provider=SQLOLEDB.1;Persist Security Info=True;;User ID=sa;Password=**nf_991**;Initial Catalog=EmailResources;Data Source=4.180.32.85"
     'lConStr = "Provider=SQLOLEDB.1;Persist Security Info=True;;User ID=sa;Password=**nf_991**;Initial Catalog=LogServices;Data Source=4.180.32.85\DEV01,62022"
 
-    lConStr2 = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=EmailServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
-    'lConStr2 = "Provider=SQLOLEDB.1;Data Source=ubuntu14;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
-    'lConStr2 = "Provider=SQLOLEDB.1;Persist Security Info=True;;User ID=sa;Password=**nf_991**;Initial Catalog=LogServices;Data Source=4.180.32.85\DEV01,62022"
+    'ubbe
+    'lConStr = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
+    'lConStr2 = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=EmailResources;User ID=sa;Password=Yamt55fA;Encrypt=False"
 
-    DIM lStatAry(1 TO 3) AS STRING
-    lStatAry(1) = "a"
-    lStatAry(2) = "b"
-    lStatAry(3) = "c"
+    'En-casa
+    'lConStr = "Provider=SQLOLEDB.1;Data Source=ubuntu14;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
 
     LOCAL lRecs,lCount,lRnd AS LONG
 
@@ -66,11 +67,6 @@ FUNCTION PBMAIN () AS LONG
     LOCAL mytimeVar AS DOUBLE
     mytimeVar = TIMER
 
-'    IF lStatus = "" THEN
-'        RANDOMIZE TIMER
-'        lRnd = RND(1,3)
-'        lStatus = lStatAry(lRnd)
-'    END IF
 
     lRecs = TsH_MSSQL_Select(lConstr, "Select Status,StatusBar,Count,Iterations,DayNumber,SecsSinceMidNight from dbo.LogEntries where ID=" & FORMAT$(lID) & ";",lResultAry())
 
@@ -87,14 +83,15 @@ FUNCTION PBMAIN () AS LONG
     lSecsDelta = (FIX(MyTimeVar) - lSecsSinceMidNight) / (lSecsADay/lNumOfIterations) -1
     LDayDelta =  AfxDay() - lDayNumber
 
-    STDOUT "DB  DayNumber     " & FORMAT$(lDayNumber)
-    STDOUT "Now DayNumber     " & FORMAT$(AfxDay())
-    STDOUT "DB  Secs since MN " & FORMAT$(lSecsSinceMidNight)
-    STDOUT "Now Secs since MN " & FORMAT$(FIX(MyTimeVar))
-    STDOUT "Seconds elapsed   " & FORMAT$(FIX(MyTimeVar) - lSecsSinceMidNight)
-    STDOUT FORMAT$(LDayDelta)
-    STDOUT FORMAT$((86400*LDayDelta) + lSecsDelta)
-
+    IF %DEBUG THEN
+        STDOUT "DB  DayNumber     " & FORMAT$(lDayNumber)
+        STDOUT "Now DayNumber     " & FORMAT$(AfxDay())
+        STDOUT "DB  Secs since MN " & FORMAT$(lSecsSinceMidNight)
+        STDOUT "Now Secs since MN " & FORMAT$(FIX(MyTimeVar))
+        STDOUT "Seconds elapsed   " & FORMAT$(FIX(MyTimeVar) - lSecsSinceMidNight)
+        STDOUT FORMAT$(LDayDelta)
+        STDOUT FORMAT$((86400*LDayDelta) + lSecsDelta)
+    END IF
 
     IF lSecsDelta > 0 THEN lBlancs=STRING$((lSecsADay * LDayDelta) + lSecsDelta,"y")
 
@@ -111,6 +108,26 @@ FUNCTION PBMAIN () AS LONG
     ",DayNumber=" & FORMAT$(AfxDay(),"00") & _
     " Where ID=" & FORMAT$(lID) & ";")
 
-    'TsH_MSSQL_WriteToSysLog(lConStr,14,"user-level messages ",6,"Informational","localhost","Logfeeder","TsH","TestMelding")
+    IF lStatus = "c" AND lID=7 THEN
+        LOCAL  lPriorityValue AS LONG
+        LOCAL lhtmlBody AS STRING
+        'profile_ID = 1 ' Citera no
+        'subject
+        'reciepients
+        'priority = 1
+        'htmlbody
+        'Transportstatus = 0
+        'dBMailSend = 0
+        'CallInvite = 0
+        lHtmlBody = "<h4>Check the Monitor WEB page for <nobr style=""color:red;"">RED</nobr> alerts!</h4>The EMAILSENDER app has failed to send one or more emails.<br>" & _
+        "Detailed status can be found here:<br>The database <b>EmailResources</b> on <b>SQLServer01</b> in the table <b>dbo.Emails</b>.<br>Select the latest records with <b>transportstatus=-1</b> and check the <b>transportMessage</b>.<br>"
+
+        TsH_MSSQL_Execute(lConStr2,"Insert into dbo.Emails(Profile_ID,subject,recipients,priority,htmlbody,Transportstatus,DBmailSend,CalInvite,Type) " & _
+        "VALUES(1,'LogFeeder Red Alert!','tor@citera.no',1,'" & lHtmlBody & "',0,0,0,'LOGFEEDER');")
+
+        lPriorityValue = (2 * 1) + 5
+        TsH_MSSQL_WriteToSysLog(lConStr,lPriorityValue,"mail system",1,"Alert","MSSQLServer01","Logfeeder","System","EmailSender error. check dbo.Emails table for further details.")
+
+    END IF
 
 END FUNCTION
