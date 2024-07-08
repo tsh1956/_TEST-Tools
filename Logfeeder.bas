@@ -4,6 +4,9 @@
 %DEBUG=0
 #INCLUDE "tsh_MSSQL.INC"
 
+
+
+
 FUNCTION PBMAIN () AS LONG
 
     'LOCAL Built AS IPowerTime
@@ -34,23 +37,10 @@ FUNCTION PBMAIN () AS LONG
         STDOUT "no status flag":EXIT FUNCTION
     END IF
 
-    LOCAL lConStr,lConStr2 AS STRING
-
-    lConStr =  "Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=LogServices;Data Source=SQLSERVER-01\DEV01"
-    lConStr2 = "Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=EmailResources;Data Source=SQLSERVER-01\SQLSERVER01"
-
-    'Dev01
-    'lConStr2 = "Provider=SQLOLEDB.1;Persist Security Info=True;;User ID=sa;Password=**nf_991**;Initial Catalog=EmailResources;Data Source=4.180.32.85"
-    'lConStr = "Provider=SQLOLEDB.1;Persist Security Info=True;;User ID=sa;Password=**nf_991**;Initial Catalog=LogServices;Data Source=4.180.32.85\DEV01,62022"
-
-    'ubbe
-    'lConStr = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
-    'lConStr2 = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=EmailResources;User ID=sa;Password=Yamt55fA;Encrypt=False"
-
-    'En-casa
-    'lConStr = "Provider=SQLOLEDB.1;Data Source=ubuntu14;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
-
     LOCAL lRecs,lCount,lRnd AS LONG
+
+    LOCAL lConStr,lConStr2 AS STRING
+    #INCLUDE "tsh_ConStrs.inc"
 
     DIM lResultAry() AS VARIANT
 

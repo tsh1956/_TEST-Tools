@@ -4,6 +4,10 @@
 %DEBUG=0
 #INCLUDE "tsh_MSSQL.INC"
 
+LOCAL lConStr,lConStr2 AS STRING
+#INCLUDE "tsh_ConStrs.inc"
+
+
 FUNCTION PBMAIN () AS LONG
 
     'LOCAL Built AS IPowerTime
@@ -33,22 +37,6 @@ FUNCTION PBMAIN () AS LONG
         lStatus = ""
         STDOUT "no status flag":EXIT FUNCTION
     END IF
-
-    LOCAL lConStr,lConStr2 AS STRING
-
-    lConStr =  "Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=LogServices;Data Source=SQLSERVER-01\DEV01"
-    lConStr2 = "Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=EmailResources;Data Source=SQLSERVER-01\SQLSERVER01"
-
-    'Dev01
-    'lConStr2 = "Provider=SQLOLEDB.1;Persist Security Info=True;;User ID=sa;Password=**nf_991**;Initial Catalog=EmailResources;Data Source=4.180.32.85"
-    'lConStr = "Provider=SQLOLEDB.1;Persist Security Info=True;;User ID=sa;Password=**nf_991**;Initial Catalog=LogServices;Data Source=4.180.32.85\DEV01,62022"
-
-    'ubbe
-    'lConStr = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
-    'lConStr2 = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=EmailResources;User ID=sa;Password=Yamt55fA;Encrypt=False"
-
-    'En-casa
-    'lConStr = "Provider=SQLOLEDB.1;Data Source=ubuntu14;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
 
     LOCAL lRecs,lCount,lRnd AS LONG
 
@@ -122,7 +110,8 @@ FUNCTION PBMAIN () AS LONG
         lHtmlBody = "<h4>Check the Monitor WEB page for <nobr style=""color:red;"">RED</nobr> alerts!</h4>The EMAILSENDER app has failed to send one or more emails.<br>" & _
         "Detailed status can be found here:<br>The database <b>EmailResources</b> on <b>SQLServer01</b> in the table <b>dbo.Emails</b>.<br>Select the latest records with <b>transportstatus=-1</b> and check the <b>transportMessage</b>.<br>"
 
-        TsH_MSSQL_Execute(lConStr2,"Insert into dbo.Emails(Profile_ID,subject,recipients,priority,htmlbody,Transportstatus,DBmailSend,CalInvite,Type) VALUES(1,'LogFeeder Red Alert!','tor@citera.no',1,'" & lHtmlBody & "',0,0,0,'LOGFEEDER');")
+        TsH_MSSQL_Execute(lConStr2,"Insert into dbo.Emails(Profile_ID,subject,recipients,priority,htmlbody,Transportstatus,DBmailSend,CalInvite,Type) " & _
+        "VALUES(1,'LogFeeder Red Alert!','tor@citera.no',1,'" & lHtmlBody & "',0,0,0,'LOGFEEDER');")
 
         lPriorityValue = (2 * 1) + 5
         TsH_MSSQL_WriteToSysLog(lConStr,lPriorityValue,"mail system",1,"Alert","MSSQLServer01","Logfeeder","System","EmailSender error. check dbo.Emails table for further details.")
