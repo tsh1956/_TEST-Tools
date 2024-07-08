@@ -1,6 +1,7 @@
 #COMPILE EXE
 #DIM ALL
 %SupressSQLErrors=-1 'No error reporting from MSSQL on errors. Remove this constant to display errors.
+%DEBUG=0
 #INCLUDE "tsh_MSSQL.INC"
 
 FUNCTION PBMAIN () AS LONG
@@ -35,13 +36,9 @@ FUNCTION PBMAIN () AS LONG
 
     LOCAL lConStr AS STRING
     lConStr = "Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=LogServices;Data Source=SQLSERVER-01\DEV01"
-    'lConStr = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
-    lConStr = "Provider=SQLOLEDB.1;Data Source=ubuntu14;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
     'lConStr = "Provider=SQLOLEDB.1;Persist Security Info=True;;User ID=sa;Password=**nf_991**;Initial Catalog=LogServices;Data Source=4.180.32.85\DEV01,62022"
-    DIM lStatAry(1 TO 3) AS STRING
-    lStatAry(1) = "a"
-    lStatAry(2) = "b"
-    lStatAry(3) = "c"
+    lConStr = "Provider=SQLOLEDB.1;Data Source=10.10.90.6;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
+    'lConStr = "Provider=SQLOLEDB.1;Data Source=ubuntu14;initial catalog=LogServices;User ID=sa;Password=Yamt55fA;Encrypt=False"
 
     LOCAL lRecs,lCount,lRnd AS LONG
 
@@ -60,11 +57,6 @@ FUNCTION PBMAIN () AS LONG
     LOCAL mytimeVar AS DOUBLE
     mytimeVar = TIMER
 
-'    IF lStatus = "" THEN
-'        RANDOMIZE TIMER
-'        lRnd = RND(1,3)
-'        lStatus = lStatAry(lRnd)
-'    END IF
 
     lRecs = TsH_MSSQL_Select(lConstr, "Select Status,StatusBar,Count,Iterations,DayNumber,SecsSinceMidNight from dbo.LogEntries where ID=" & FORMAT$(lID) & ";",lResultAry())
 
@@ -81,14 +73,15 @@ FUNCTION PBMAIN () AS LONG
     lSecsDelta = (FIX(MyTimeVar) - lSecsSinceMidNight) / (lSecsADay/lNumOfIterations) -1
     LDayDelta =  AfxDay() - lDayNumber
 
-    STDOUT "DB  DayNumber     " & FORMAT$(lDayNumber)
-    STDOUT "Now DayNumber     " & FORMAT$(AfxDay())
-    STDOUT "DB  Secs since MN " & FORMAT$(lSecsSinceMidNight)
-    STDOUT "Now Secs since MN " & FORMAT$(FIX(MyTimeVar))
-    STDOUT "Seconds elapsed   " & FORMAT$(FIX(MyTimeVar) - lSecsSinceMidNight)
-    STDOUT FORMAT$(LDayDelta)
-    STDOUT FORMAT$((86400*LDayDelta) + lSecsDelta)
-
+    IF %DEBUG THEN
+        STDOUT "DB  DayNumber     " & FORMAT$(lDayNumber)
+        STDOUT "Now DayNumber     " & FORMAT$(AfxDay())
+        STDOUT "DB  Secs since MN " & FORMAT$(lSecsSinceMidNight)
+        STDOUT "Now Secs since MN " & FORMAT$(FIX(MyTimeVar))
+        STDOUT "Seconds elapsed   " & FORMAT$(FIX(MyTimeVar) - lSecsSinceMidNight)
+        STDOUT FORMAT$(LDayDelta)
+        STDOUT FORMAT$((86400*LDayDelta) + lSecsDelta)
+    END IF
 
     IF lSecsDelta > 0 THEN lBlancs=STRING$((lSecsADay * LDayDelta) + lSecsDelta,"y")
 
