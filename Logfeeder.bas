@@ -1,6 +1,6 @@
 #COMPILE EXE
 #DIM ALL
-%SupressSQLErrors=-1
+%SupressSQLErrors=-1 'No error reporting from MSSQL on errors. Remove this constant to display errors.
 #INCLUDE "tsh_MSSQL.INC"
 
 FUNCTION PBMAIN () AS LONG

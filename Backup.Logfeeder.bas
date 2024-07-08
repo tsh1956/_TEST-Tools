@@ -48,7 +48,7 @@ FUNCTION PBMAIN () AS LONG
     DIM lResultAry() AS VARIANT
 
 '---------static begin
-    LOCAL lNumOfIterations,lSecsSinceMidNight,lDayNumber,lSecsDelta,lDayDelta AS LONG
+    LOCAL lNumOfIterations,lSecsSinceMidNight,lDayNumber,lSecsDelta,lDayDelta,lSecsADay AS LONG
     LOCAL lStatusBarInternal,lBlancs AS STRING
 
     RESET lBlancs
@@ -74,9 +74,11 @@ FUNCTION PBMAIN () AS LONG
     lCount = VAL(AfxVarToStr(lResultAry(2,lRecs)))
     lNumOfIterations = VAL(AfxVarToStr(lResultAry(3,lRecs)))
 
+    lSecsADay = 86400
+
     lDayNumber = VAL(AfxVarToStr(lResultAry(4,lRecs)))
     lSecsSinceMidNight = VAL(AfxVarToStr(lResultAry(5,lRecs)))
-    lSecsDelta = (FIX(MyTimeVar) - lSecsSinceMidNight) / (86400/lNumOfIterations) -1
+    lSecsDelta = (FIX(MyTimeVar) - lSecsSinceMidNight) / (lSecsADay/lNumOfIterations) -1
     LDayDelta =  AfxDay() - lDayNumber
 
     STDOUT "DB  DayNumber     " & FORMAT$(lDayNumber)
@@ -88,7 +90,7 @@ FUNCTION PBMAIN () AS LONG
     STDOUT FORMAT$((86400*LDayDelta) + lSecsDelta)
 
 
-    IF lSecsDelta > 0 THEN lBlancs=STRING$((86400*LDayDelta) + lSecsDelta,"y")
+    IF lSecsDelta > 0 THEN lBlancs=STRING$((lSecsADay * LDayDelta) + lSecsDelta,"y")
 
     'truncate statusbar to prevent overflow
     IF LEN(lStatusBar) > (lNumOfIterations * 3) THEN lStatusBar = LEFT$(lStatusBar,(lNumOfIterations * 3))
