@@ -120,8 +120,8 @@ FUNCTION PBMAIN () AS LONG
         'dBMailSend = 0
         'CallInvite = 0
         lHtmlBody = "<h4>Check the Monitor WEB page for <nobr style=""color:red;"">RED</nobr> alerts!</h4>The EMAILSENDER app has failed to send one or more emails.<br>" & _
-        "Detailed status can be found here:<br>The database <b>EmailResources</b> on <b>SQLServer01</b> in the table <b>dbo.Emails</b>.<br>Select the latest records with <b>transportstatus=-1</b> and check the <b>transportMessage</b>.<br>" & _
-        "Be aware that the transportMessage field begins with non-human readable data, but typically ends with a clear text message at the tail.
+        "Detailed status can be found here:<br>The database <b>EmailResources</b> on <b>SQLServer01</b> in the table <b>dbo.Emails</b>.<br>Select the latest records with <b>transportstatus=-1</b> and check the <b>transportMessage</b>.<br>"
+
         TsH_MSSQL_Execute(lConStr2,"Insert into dbo.Emails(Profile_ID,subject,recipients,priority,htmlbody,Transportstatus,DBmailSend,CalInvite,Type) VALUES(1,'LogFeeder Red Alert!','tor@citera.no',1,'" & lHtmlBody & "',0,0,0,'LOGFEEDER');")
 
         lPriorityValue = (2 * 1) + 5
