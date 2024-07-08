@@ -4,8 +4,7 @@
 %DEBUG=0
 #INCLUDE "tsh_MSSQL.INC"
 
-LOCAL lConStr,lConStr2 AS STRING
-#INCLUDE "tsh_ConStrs.inc"
+
 
 
 FUNCTION PBMAIN () AS LONG
@@ -39,6 +38,9 @@ FUNCTION PBMAIN () AS LONG
     END IF
 
     LOCAL lRecs,lCount,lRnd AS LONG
+
+    LOCAL lConStr,lConStr2 AS STRING
+    #INCLUDE "tsh_ConStrs.inc"
 
     DIM lResultAry() AS VARIANT
 
