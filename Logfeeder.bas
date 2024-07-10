@@ -18,9 +18,9 @@ FUNCTION PBMAIN () AS LONG
     RESET lStatus,lStatusBar
 
     LOCAL lID AS LONG
-    lIn_1 = COMMAND$(1) 'id
-    lIn_2 = COMMAND$(2) 'statusflags
-    lIn_3 = COMMAND$(3) 'email addresse(s) for alerts
+    lIn_1 = COMMAND$(1) 'Job id
+    lIn_2 = COMMAND$(2) 'statusflag
+    lIn_3 = COMMAND$(3) 'email recipient(s) for alerts
     lIn_4 = COMMAND$(4) '
     lIn_5 = COMMAND$(5)
 
@@ -40,23 +40,17 @@ FUNCTION PBMAIN () AS LONG
     LOCAL lRecs,lCount,lRnd AS LONG
 
     LOCAL lConStr,lConStr2 AS STRING
-    #INCLUDE "tsh_ConStrs.inc"
+    #INCLUDE "tsh_ConStr.inc"
 
     DIM lResultAry() AS VARIANT
 
-'---------static begin
     LOCAL lNumOfIterations,lSecsSinceMidNight,lDayNumber,lSecsDelta,lDayDelta,lSecsADay AS LONG
     LOCAL lStatusBarInternal,lBlancs AS STRING
 
     RESET lBlancs
 
-    'lNumOfIterations = 288
-    'lStatusBarInternal = STRING$(lNumOfIterations,"x")
-'---------static stop
-
     LOCAL mytimeVar AS DOUBLE
     mytimeVar = TIMER
-
 
     lRecs = TsH_MSSQL_Select(lConstr, "Select Status,StatusBar,Count,Iterations,DayNumber,SecsSinceMidNight from dbo.LogEntries where ID=" & FORMAT$(lID) & ";",lResultAry())
 
@@ -98,9 +92,11 @@ FUNCTION PBMAIN () AS LONG
     ",DayNumber=" & FORMAT$(AfxDay(),"00") & _
     " Where ID=" & FORMAT$(lID) & ";")
 
+
+    'EMailSender Monitor example
     IF lStatus = "c" AND lID=7 THEN
         LOCAL  lPriorityValue AS LONG
-        LOCAL lhtmlBody AS STRING
+        LOCAL lhtmlBody,lTransportMessage AS STRING
         'profile_ID = 1 ' Citera no
         'subject
         'reciepients
@@ -109,11 +105,15 @@ FUNCTION PBMAIN () AS LONG
         'Transportstatus = 0
         'dBMailSend = 0
         'CallInvite = 0
-        lHtmlBody = "<h4>Check the Monitor WEB page for <nobr style=""color:red;"">RED</nobr> alerts!</h4>The EMAILSENDER app has failed to send one or more emails. <a href=""https://watchdog.hmsvisjon.no"" target=""_blank"">Check here</a><br>" & _
-        "Detailed status can be found here:<br>The database <b>EmailResources</b> on <b>SQLServer01</b> in the table <b>dbo.Emails</b>.<br>Select the latest records with <b>transportstatus=-1</b> and check the <b>transportMessage</b>.<br>"
+        lRecs = TsH_MSSQL_Select(lConstr2,"SELECT [email_ID],[transportMessage] fROM [EmailResources].[dbo].[Emails] where transportStatus =  -1 order by email_ID desc;",lResultAry())
+        lTransportMessage = AfxVarToStr(lResultAry(1,lRecs))
+
+        lHtmlBody = "<h4>Check the Monitor WEB page for <nobr style=""color:red;"">RED</nobr> alerts!</h4>The EMAILSENDER app failed to send one or more emails at " & Dateformat(5) & ".<br>" & _
+        "Check the Monitor pages <a href=""https://watchdog.hmsvisjon.no"" target=""_blank"">here</a>.<p>" & _
+        "Last error message: <I>" & lTransportMessage & "</I>.<br>"
 
         TsH_MSSQL_Execute(lConStr2,"Insert into dbo.Emails(Profile_ID,subject,recipients,priority,htmlbody,Transportstatus,DBmailSend,CalInvite,Type) " & _
-        "VALUES(1,'LogFeeder Red Alert!','tor@citera.no',1,'" & lHtmlBody & "',0,0,0,'LOGFEEDER');")
+        "VALUES(1,'LogFeeder - Red Alert!','tor@citera.no',1,'" & lHtmlBody & "',0,0,0,'LogFeeder');")
 
         lPriorityValue = (2 * 1) + 5
         TsH_MSSQL_WriteToSysLog(lConStr,lPriorityValue,"mail system",1,"Alert","MSSQLServer01","Logfeeder","System","EmailSender error. check dbo.Emails table for further details.")
