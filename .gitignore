@@ -2,3 +2,5 @@
 *.bak
 *.log
 *.inc
+Backup*.*
+
