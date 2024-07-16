@@ -67,12 +67,12 @@ THREAD FUNCTION waitThread ( BYVAL lngDoNothing AS LONG ) AS LONG
     LOCAL lId,lIdx AS LONG
     LOCAL lStatusBar AS STRING
 
-    DO 'UNTIL test = 2
+    DO
 
     lRecs = TsH_MSSQL_Select(lConstr, "Select ID,StatusBar from dbo.LogEntries;",lResultAry())
 
     IF lRecs = -1 THEN GOTO jazz
-    '? format$(lRecs): exit function
+
     FOR lIdx = 0 TO lRecs
         lId                 = VAL(AfxVarToStr(lResultAry(0,lIdx)))
         lStatusBar          = "y" + AfxVarToStr(lResultAry(1,lIdx))
@@ -86,7 +86,6 @@ THREAD FUNCTION waitThread ( BYVAL lngDoNothing AS LONG ) AS LONG
    '5 minutes
    SLEEP 300000
 
-   'INCR test
    LOOP
 
 END FUNCTION
