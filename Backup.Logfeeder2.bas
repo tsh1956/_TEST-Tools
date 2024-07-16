@@ -3,6 +3,20 @@
 '%SupressSQLErrors=-1 'No error reporting from MSSQL on errors. Remove this constant to display errors.
 %DEBUG=-1
 #INCLUDE "tsh_MSSQL.INC"
+' The name of the service
+$SERVICE_NAME = "LogFeeder"
+$SERVICE_DISPLAY_NAME = "LogFeeder"
+$SERVICE_DESCRIPTION  = "LogFeeder Helper App"
+'
+'- REM OUT this line to compile as a console application
+%COMPILE_AS_SERVICE = 0
+'
+#IF %DEF(%COMPILE_AS_SERVICE)
+  #INCLUDE "pb_srvc.inc"
+#ENDIF
+
+
+
 
 FUNCTION PBMAIN () AS LONG
 
