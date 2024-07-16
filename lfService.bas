@@ -1,12 +1,5 @@
 #COMPILE EXE
 #DIM ALL
-#INCLUDE "win32api.inc"
-'
-' include file hashing libraries
-#INCLUDE "Base32Str.inc"
-#INCLUDE "PBCrypto128.inc"
-#INCLUDE "PB_FileHash.inc"
-#INCLUDE "PB_FileHandlingRoutines.inc"
 '
 '%SupressSQLErrors=-1 'No error reporting from MSSQL on errors. Remove this constant to display errors.
 '%DEBUG=-1
@@ -14,7 +7,7 @@
 ' The name of the service
 $SERVICE_NAME = "LogFeeder"
 $SERVICE_DISPLAY_NAME = "LogFeeder "
-$SERVICE_DESCRIPTION  = "LogFeeder inserts blanks every 5 minutes"
+$SERVICE_DESCRIPTION  = "Citera LogFeeder"
 '
 '- REM OUT this line to compile as a console application
 %COMPILE_AS_SERVICE = 1
