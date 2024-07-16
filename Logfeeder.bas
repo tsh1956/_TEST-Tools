@@ -67,19 +67,15 @@ FUNCTION PBMAIN () AS LONG
     LDayDelta =  AfxDay() - lDayNumber
 
     IF %DEBUG THEN
-        'STDOUT "DB  DayNumber                       " & FORMAT$(lDayNumber)
-        'STDOUT "Now DayNumber                       " & FORMAT$(AfxDay())
-        STDOUT "Secsonds read from database         " & FORMAT$(lSecsSinceLastUpDate)
-        STDOUT "Secsonds read now                   " & FORMAT$(FIX(MyTimeVar))
+        STDOUT "Seconds read from database         " & FORMAT$(lSecsSinceLastUpDate)
+        STDOUT "Seconds read now                   " & FORMAT$(FIX(MyTimeVar))
         STDOUT "Seconds since last update           " & FORMAT$(FIX(MyTimeVar) - lSecsSinceLastUpDate)
-        'STDOUT "Any days elapsed since last read ?  " & FORMAT$(LDayDelta)
         STDOUT "How many ticks per block?             300"
         STDOUT "Any black blocks needed?             " & FORMAT$(lSecsDelta)
         STDOUT FORMAT$((86400*LDayDelta) + lSecsDelta)
         STDOUT FORMAT$(lSecsDelta)
     END IF
 
-    'IF lSecsDelta > 0 THEN lBlancs=STRING$(FIX((MyTimeVar-lSecsSinceLastUpDate) / 300) ,"y")
 
     'truncate statusbar to prevent overflow
     IF LEN(lStatusBar) > (lNumOfIterations * 3) THEN lStatusBar = LEFT$(lStatusBar,(lNumOfIterations * 3))

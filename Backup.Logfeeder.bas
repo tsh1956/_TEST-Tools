@@ -87,7 +87,7 @@ FUNCTION PBMAIN () AS LONG
     INCR lCount
 
     TsH_MSSQL_Execute(lConStr, "Update dbo.LogEntries set Status='" & lStatus & _
-    "', StatusBar='" lStatus & MID$(lStatusbar,2) & _
+    "', StatusBar='" & lStatus & MID$(lStatusbar,2) & _
     "', Count=" & FORMAT$(lCount) & _
     ",TimeStamp=CAST('" & Dateformat(5) &  "'  AS DATETIME),SecsSinceMidNight=" & _
     FORMAT$(FIX(MyTimeVar)) & _
