@@ -1,8 +1,7 @@
 #COMPILE EXE
 #DIM ALL
-'
-'%SupressSQLErrors=-1 'No error reporting from MSSQL on errors. Remove this constant to display errors.
-'%DEBUG=-1
+    'No error reporting from MSSQL on errors by default. REM OUT this constant to display errors.
+%SupressSQLErrors=-1
 #INCLUDE "tsh_MSSQL.INC"
 ' The name of the service
 $SERVICE_NAME = "LogFeeder"
@@ -10,7 +9,7 @@ $SERVICE_DISPLAY_NAME = "LogFeeder "
 $SERVICE_DESCRIPTION  = "Citera LogFeeder"
 '
 '- REM OUT this line to compile as a console application
-%COMPILE_AS_SERVICE = 1
+REM %COMPILE_AS_SERVICE = 1
 '
 #IF %DEF(%COMPILE_AS_SERVICE)
   #INCLUDE "pb_srvc.inc"
@@ -26,7 +25,7 @@ FUNCTION PBMAIN () AS LONG
    '
    THREAD CREATE waitThread(0) TO lngWaitThreadID
    '
-    '- Start the service
+   '- Start the service
    #IF %DEF(%COMPILE_AS_SERVICE)
      pbsInit 0, $SERVICE_NAME, $SERVICE_DISPLAY_NAME, _
                 $SERVICE_DESCRIPTION
@@ -60,6 +59,7 @@ THREAD FUNCTION waitThread ( BYVAL lngDoNothing AS LONG ) AS LONG
 
     LOCAL lConStr,lConStr2 AS STRING
 
+    'Inspect your sources
     #INCLUDE "tsh_ConStr.inc"
 
     DIM lResultAry() AS VARIANT
@@ -71,20 +71,21 @@ THREAD FUNCTION waitThread ( BYVAL lngDoNothing AS LONG ) AS LONG
 
     lRecs = TsH_MSSQL_Select(lConstr, "Select ID,StatusBar from dbo.LogEntries;",lResultAry())
 
-    IF lRecs = -1 THEN GOTO jazz
+    'if there is no records to process, just wait...
+    IF lRecs = -1 THEN GOTO dormir
 
-    FOR lIdx = 0 TO lRecs
-        lId                 = VAL(AfxVarToStr(lResultAry(0,lIdx)))
-        lStatusBar          = "y" + AfxVarToStr(lResultAry(1,lIdx))
+        FOR lIdx = 0 TO lRecs
 
-        TsH_MSSQL_Execute(lConStr, "Update dbo.LogEntries set StatusBar='" & lStatusBar  & "' Where ID=" & FORMAT$(lId) & ";")
+            lId                 = VAL(AfxVarToStr(lResultAry(0,lIdx)))
+            lStatusBar          = "y" + AfxVarToStr(lResultAry(1,lIdx))
 
-   NEXT
+            TsH_MSSQL_Execute(lConStr, "Update dbo.LogEntries set StatusBar='" & lStatusBar  & "' Where ID=" & FORMAT$(lId) & ";")
 
-   jazz:
+        NEXT
 
-   '5 minutes
-   SLEEP 300000
+   dormir:
+   ' wait in 5 minute, run and do this forever
+   SLEEP 3000
 
    LOOP
 
