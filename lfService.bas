@@ -9,7 +9,7 @@ $SERVICE_DISPLAY_NAME = "LogFeeder "
 $SERVICE_DESCRIPTION  = "Citera LogFeeder"
 '
 '- REM OUT this line to compile as a console application
-REM %COMPILE_AS_SERVICE = 1
+%COMPILE_AS_SERVICE = 1
 '
 #IF %DEF(%COMPILE_AS_SERVICE)
   #INCLUDE "pb_srvc.inc"
@@ -64,12 +64,12 @@ THREAD FUNCTION waitThread ( BYVAL lngDoNothing AS LONG ) AS LONG
 
     DIM lResultAry() AS VARIANT
 
-    LOCAL lId,lIdx AS LONG
+    LOCAL lId,lIdx,lVisible AS LONG
     LOCAL lStatusBar AS STRING
 
     DO
 
-    lRecs = TsH_MSSQL_Select(lConstr, "Select ID,StatusBar from dbo.LogEntries;",lResultAry())
+    lRecs = TsH_MSSQL_Select(lConstr, "Select ID,StatusBar,Visible from dbo.LogEntries;",lResultAry())
 
     'if there is no records to process, just wait...
     IF lRecs = -1 THEN GOTO dormir
@@ -78,14 +78,16 @@ THREAD FUNCTION waitThread ( BYVAL lngDoNothing AS LONG ) AS LONG
 
             lId                 = VAL(AfxVarToStr(lResultAry(0,lIdx)))
             lStatusBar          = "y" + AfxVarToStr(lResultAry(1,lIdx))
+            lVisible            = VAL(AfxVarToStr(lResultAry(2,lIdx)))
+            IF lVisible > 0 THEN DECR lVisible
 
-            TsH_MSSQL_Execute(lConStr, "Update dbo.LogEntries set StatusBar='" & lStatusBar  & "' Where ID=" & FORMAT$(lId) & ";")
+            TsH_MSSQL_Execute(lConStr, "Update dbo.LogEntries set StatusBar='" & lStatusBar  & "',Visible=" & FORMAT$(lVisible) & " Where ID=" & FORMAT$(lId) & ";")
 
         NEXT
 
    dormir:
    ' wait in 5 minute, run and do this forever
-   SLEEP 3000
+   SLEEP 300000
 
    LOOP
 

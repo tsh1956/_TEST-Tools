@@ -6,10 +6,6 @@
 
 FUNCTION PBMAIN () AS LONG
 
-    'LOCAL Built AS IPowerTime
-
-    'LET Built = CLASS "PowerTime"
-
     LOCAL lIn_1,lIn_2,lIn_3,lIn_4,lIn_5 AS STRING
     LOCAL lStatus,lStatusBar AS STRING
     RESET lStatus,lStatusBar
@@ -43,39 +39,31 @@ FUNCTION PBMAIN () AS LONG
 
     DIM lResultAry() AS VARIANT
 
-    LOCAL lNumOfIterations,lSecsSinceLastUpDate,lDayNumber,lSecsDelta,lDayDelta,lSecsADay,lTick AS LONG
+    LOCAL lNumOfIterations,lSecsSinceLastUpDate,lDayNumber,lSecsDelta,lStatusBarLength,lVisible AS LONG
     LOCAL lStatusBarInternal,lBlancs AS STRING
 
     RESET lBlancs
 
-    LOCAL mytimeVar AS DOUBLE
-    mytimeVar = TIMER
+    LOCAL lMyTimeVar AS DOUBLE
+    lMyTimeVar = TIMER
 
-    lRecs = TsH_MSSQL_Select(lConstr, "Select Status,StatusBar,Count,Iterations,DayNumber,SecsSinceMidNight from dbo.LogEntries where LogMessage='" & lLogMessage & "';",lResultAry())
+    lRecs = TsH_MSSQL_Select(lConstr, "Select Status,StatusBar,Count,Iterations,DayNumber,SecsSinceMidNight,Visible from dbo.LogEntries where LogMessage='" & lLogMessage & "';",lResultAry())
 
     IF lRecs = -1 THEN STDOUT "LogMessage not found":EXIT FUNCTION
 
     lStatusBar          = AfxVarToStr(lResultAry(1,lRecs))
     lCount              = VAL(AfxVarToStr(lResultAry(2,lRecs)))
     lNumOfIterations    = VAL(AfxVarToStr(lResultAry(3,lRecs)))
-    lSecsSinceLastUpDate = VAL(AfxVarToStr(lResultAry(5,lRecs)))
+    lVisible            = VAL(AfxVarToStr(lResultAry(6,lRecs)))
 
-    lSecsADay = 86400
-    lTick = 300
-    lDayNumber = VAL(AfxVarToStr(lResultAry(4,lRecs)))
-    lSecsDelta = ((FIX(MyTimeVar)-lSecsSinceLastUpDate) / lTick)-1
-    LDayDelta =  AfxDay() - lDayNumber
+    'Make status visible
+    IF TALLY(lStatus,ANY "bcdex") > 0 THEN lVisible = 144
 
-    IF %DEBUG THEN
-        STDOUT "Seconds read from database         " & FORMAT$(lSecsSinceLastUpDate)
-        STDOUT "Seconds read now                   " & FORMAT$(FIX(MyTimeVar))
-        STDOUT "Seconds since last update           " & FORMAT$(FIX(MyTimeVar) - lSecsSinceLastUpDate)
-        STDOUT "How many ticks per block?             300"
-        STDOUT "Any black blocks needed?             " & FORMAT$(lSecsDelta)
-        STDOUT FORMAT$((86400*LDayDelta) + lSecsDelta)
-        STDOUT FORMAT$(lSecsDelta)
+    'Secure that statusbar has AT LEAST as long as lNumOfIterations, adjust if not
+    lStatusBarLength = LEN(lStatusBar)
+    IF lStatusBarLength < lNumOfIterations THEN
+        lStatusBar += STRING$((lNumOfIterations-lStatusBarLength),"y")
     END IF
-
 
     'truncate statusbar to prevent overflow
     IF LEN(lStatusBar) > (lNumOfIterations * 3) THEN lStatusBar = LEFT$(lStatusBar,(lNumOfIterations * 3))
@@ -86,8 +74,9 @@ FUNCTION PBMAIN () AS LONG
     "', StatusBar='" & lStatus & MID$(lStatusbar,2) & _
     "', Count=" & FORMAT$(lCount) & _
     ",TimeStamp=CAST('" & Dateformat(5) &  "'  AS DATETIME),SecsSinceMidNight=" & _
-    FORMAT$(FIX(MyTimeVar)) & _
+    FORMAT$(FIX(lMyTimeVar)) & _
     ",DayNumber=" & FORMAT$(AfxDay(),"00") & _
+    ",Visible=" & FORMAT$(lVisible) & _
     " Where LogMessage='" & lLogMessage & "';")
 
 
