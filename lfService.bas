@@ -9,7 +9,7 @@ $SERVICE_DISPLAY_NAME = "LogFeeder "
 $SERVICE_DESCRIPTION  = "Citera LogFeeder"
 '
 '- REM OUT this line to compile as a console application
-%COMPILE_AS_SERVICE = 1
+'%COMPILE_AS_SERVICE = 1
 '
 #IF %DEF(%COMPILE_AS_SERVICE)
   #INCLUDE "pb_srvc.inc"

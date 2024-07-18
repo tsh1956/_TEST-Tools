@@ -103,6 +103,7 @@ FUNCTION PBMAIN () AS LONG
         "VALUES(9,'LogFeeder - Alert!','tor@citera.no',1,'" & lHtmlBody & "',0,0,0,'LogFeeder');")
 
         lPriorityValue = (2 * 1) + 5
+
         TsH_MSSQL_WriteToSysLog(lConStr,lPriorityValue,"mail system",1,"Alert","MSSQLServer01","Logfeeder","System","EmailSender error. check dbo.Emails table for further details.")
 
     END IF
